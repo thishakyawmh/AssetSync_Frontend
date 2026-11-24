@@ -11,7 +11,6 @@ import {
   Grid,
   Chip,
   Stack,
-  useTheme
 } from '@mui/material';
 
 // Inline simple SVG icons to avoid external dependencies
