@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -12,7 +11,6 @@ import {
   Grid,
   Chip,
   Stack,
-  useTheme
 } from '@mui/material';
 
 // Inline simple SVG icons to avoid external dependencies
@@ -56,8 +54,6 @@ const CalendarIcon = () => (
  * Displays suggestion cards for alternative resources/times when a conflict occurs.
  */
 export default function AlternativeModal({ open, onClose, conflictData, onSelectAlternative }) {
-  const theme = useTheme();
-
   const message = conflictData?.message || 'Requested resource is currently unavailable.';
   const alternativeResources = conflictData?.alternativeResources || [];
   const alternativeTimes = conflictData?.alternativeTimes || [];

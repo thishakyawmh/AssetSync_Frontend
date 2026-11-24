@@ -24,7 +24,7 @@ const MasterCalendar = () => {
                 setLoading(true);
                 const data = await fetchCalendarEvents();
                 setEvents(data);
-            } catch (err) {
+            } catch {
                 setError('Failed to fetch calendar events.');
             } finally {
                 setLoading(false);

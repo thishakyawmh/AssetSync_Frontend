@@ -1,92 +1,81 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:8085/api';
+const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8085/api";
+export const API_BASE_URL = configuredBaseUrl.replace(/\/+$/, "");
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 15000,
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+});
+
+const logApiError = (operation, error) => {
+  console.error(`AssetSync API ${operation} failed:`, error.response?.data || error.message || error);
+};
 
 /**
- * Fetches resources from the Spring Boot backend.
- * If type is provided ('LOCATION' or 'EQUIPMENT'), it's appended as a query param.
- * 
- * @param {string|null} type - Optional resource type filter
- * @returns {Promise<Array>} Promise resolving to the list of resources
+ * Fetch resources from the Spring Boot API.
+ * @param {string|null} type Resource type filter (LOCATION or EQUIPMENT).
  */
 export const fetchResources = async (type = null) => {
   try {
-    const params = {};
-    if (type && type !== 'ALL') {
-      params.type = type;
-    }
-
-    const response = await axios.get(`${API_BASE_URL}/resources`, { params });
-    return response.data;
+    const params = type && type !== "ALL" ? { type } : {};
+    const response = await api.get("/resources", { params });
+    return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
-    console.error('Error in fetchResources API helper:', error.message || error);
+    logApiError("fetchResources", error);
     throw error;
   }
 };
 
 /**
- * Books equipment by sending a request to the backend.
- * Crucially returns the error response data if a 409 Conflict occurs.
- * 
- * @param {Object} payload - The booking request payload
- * @returns {Promise<Object|string>} The saved BookingRequest object or conflict error message
+ * Submit an equipment booking. Preserve structured 409 conflict suggestions.
  */
 export const bookEquipment = async (payload) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/equipment/book`, payload);
+    const response = await api.post("/equipment/book", payload);
     return response.data;
   } catch (error) {
-    if (error.response && error.response.status === 409) {
-      return error.response.data;
+    if (error.response?.status === 409) {
+      return { ...error.response.data, httpStatus: 409 };
     }
-    console.error('Error in bookEquipment API helper:', error.message || error);
+    logApiError("bookEquipment", error);
     throw error;
   }
 };
 
 /**
- * Submits a location advance request to the backend.
- * 
- * @param {Object} payload - The location request payload
- * @returns {Promise<Object>} The saved LocationRequest object
+ * Submit a location request, optionally targeting a selected alternative room.
  */
 export const submitLocationRequest = async (payload) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/locations/request`, payload);
+    const response = await api.post("/locations/request", payload);
     return response.data;
   } catch (error) {
-    console.error('Error in submitLocationRequest API helper:', error.message || error);
+    logApiError("submitLocationRequest", error);
     throw error;
   }
 };
 
-/**
- * Triggers the 24-hour batch scheduling allocation algorithm on the backend.
- * 
- * @returns {Promise<string>} Success message from the backend
- */
 export const triggerBatchProcess = async () => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/locations/process-batch`);
+    const response = await api.post("/locations/process-batch");
     return response.data;
   } catch (error) {
-    console.error('Error in triggerBatchProcess API helper:', error.message || error);
+    logApiError("triggerBatchProcess", error);
     throw error;
   }
 };
 
-
-/**
- * Fetches unified calendar events from the backend.
- * 
- * @returns {Promise<Array>} Promise resolving to the list of calendar events
- */
 export const fetchCalendarEvents = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/calendar/events`);
-    return response.data;
+    const response = await api.get("/calendar/events");
+    return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
-    console.error('Error in fetchCalendarEvents API helper:', error.message || error);
+    logApiError("fetchCalendarEvents", error);
     throw error;
   }
 };

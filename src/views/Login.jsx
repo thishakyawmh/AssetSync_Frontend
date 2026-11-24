@@ -56,6 +56,9 @@ export default function Login({ onSelectRole }) {
             <Typography variant="body1" sx={{ color: 'text.secondary', fontWeight: 500, opacity: 0.8, px: 2 }}>
               Select a demo role below to access the University Resource Management portal.
             </Typography>
+            <Typography variant="caption" sx={{ display: 'block', mt: 1.5, color: 'warning.light', px: 2 }}>
+              Demo mode only: role selection is not real authentication or access control.
+            </Typography>
           </Box>
 
           <Grid container spacing={3} sx={{ mt: 1, alignItems: 'stretch' }}>
