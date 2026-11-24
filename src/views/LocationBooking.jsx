@@ -48,16 +48,49 @@ export default function LocationBooking({ userRole }) {
     }));
   };
 
-  const handleSelectAlternative = (alternativeResourceId) => {
-    // Alert the user that they have selected an alternative room suggestion
-    setSuccessOpen(true);
-    setFormData({
-      requestedCategory: '',
-      requesterName: '',
-      studentCount: '',
-      startTime: '',
-      endTime: ''
-    });
+  const handleSelectAlternative = async (alternativeResourceId) => {
+    const alternative = conflictData?.alternativeResources?.find(
+      (resource) => String(resource.id) === String(alternativeResourceId)
+    );
+
+    if (!alternative) {
+      setErrorMsg('The selected alternative room could not be found. Please try again.');
+      return;
+    }
+
+    const payload = {
+      preferredResourceId: Number(alternative.id),
+      requestedCategory: alternative.category,
+      requesterName: formData.requesterName,
+      priority: userRole === 'LECTURER' ? 1 : 2,
+      studentCount: Number(formData.studentCount),
+      startTime: formData.startTime,
+      endTime: formData.endTime
+    };
+
+    setLoading(true);
+    setErrorMsg(null);
+    try {
+      await submitLocationRequest(payload);
+      setSuccessOpen(true);
+      setModalOpen(false);
+      setFormData({
+        requestedCategory: '',
+        requesterName: '',
+        studentCount: '',
+        startTime: '',
+        endTime: ''
+      });
+    } catch (error) {
+      if (error.response?.status === 409) {
+        setConflictData(error.response.data);
+        setModalOpen(true);
+      } else {
+        setErrorMsg(error.response?.data?.message || 'Could not submit the selected alternative room.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
