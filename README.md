@@ -13,10 +13,10 @@ React + Vite + Material UI frontend for the AssetSync university resource manage
 1. Install dependencies:
 
    ```bash
-   npm ci
+   npm install
    ```
 
-2. Copy `.env.example` to `.env.local` and set `VITE_API_BASE_URL` to your backend API URL.
+2. Copy `.env.example` to `.env.local` and set `VITE_API_BASE_URL` to your backend API URL. The current committed lockfile needs a refresh; `npm install` resolves and updates it locally.
 
 3. Start the frontend:
 
