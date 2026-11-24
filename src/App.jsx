@@ -61,16 +61,20 @@ function App() {
   const [activeTab, setActiveTab] = useState(0);
   const [allocatorSubTab, setAllocatorSubTab] = useState('request');
   const [userRole, setUserRole] = useState(() => {
-    return localStorage.getItem('demoUserRole') || null;
+    const storedRole = localStorage.getItem('demoUserRole');
+    return ['LECTURER', 'STUDENT'].includes(storedRole) ? storedRole : null;
   });
 
   const handleSelectRole = (role) => {
+    if (!['LECTURER', 'STUDENT'].includes(role)) return;
     setUserRole(role);
     localStorage.setItem('demoUserRole', role);
+    setAllocatorSubTab('request');
   };
 
   const handleLogout = () => {
     setUserRole(null);
+    setAllocatorSubTab('request');
     localStorage.removeItem('demoUserRole');
   };
 
@@ -82,6 +86,9 @@ function App() {
       case 1:
         return <EquipmentBooking userRole={userRole} />;
       case 2:
+        if (userRole !== 'LECTURER') {
+          return <LocationBooking userRole={userRole} />;
+        }
         return (
           <Box sx={{ mt: 4 }}>
             <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
