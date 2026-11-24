@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ThemeProvider, createTheme, CssBaseline, Container, Box, Typography, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { ThemeProvider, createTheme, CssBaseline, Container, Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import Navbar from './components/Navbar';
 import ResourceCatalog from './views/ResourceCatalog';
 import EquipmentBooking from './views/EquipmentBooking';
