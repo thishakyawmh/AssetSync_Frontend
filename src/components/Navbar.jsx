@@ -80,7 +80,7 @@ const Navbar = ({ activeTab, onTabChange, userRole, onLogout }) => {
             >
               <Tab label="Catalog" />
               <Tab label="Book Equipment" />
-              <Tab label="Location Batch Allocator" />
+              <Tab label="Location Batch Allocator" disabled={userRole !== 'LECTURER'} />
               <Tab label="Master Calendar" />
             </Tabs>
 
